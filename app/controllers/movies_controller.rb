@@ -54,20 +54,21 @@ class MoviesController < ApplicationController
     render template: "movies/edit" 
   end
 
-  def update
-    the_id = params.fetch(:id)
-    the_movie = Movie.where({ id: the_id }).first
+ def update
+  the_id = params.fetch(:id)
+  the_movie = Movie.where({ id: the_id }).first
 
-    the_movie.title = params.fetch("query_title")
-    the_movie.description = params.fetch("query_description")
+  the_movie.title = params.fetch("query_title")
+  the_movie.description = params.fetch("query_description")
 
-    if the_movie.valid?
-      the_movie.save
-      redirect_to movie_url(the movie),  notice: "Movie updated successfully."
-    else
-      redirect_to movie_url(the movie),  alert: "Movie failed to update successfully."
-    end
+  if the_movie.valid?
+    the_movie.save
+    redirect_to movie_url(the_movie),  notice: "Movie updated successfully."
+  else
+    redirect_to movie_url(the_movie),  alert: "Movie failed to update successfully."
   end
+end
+
 
   def destroy
     the_id = params.fetch(:id)
