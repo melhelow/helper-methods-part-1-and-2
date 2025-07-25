@@ -1,31 +1,17 @@
-<h1>Edit movie</h1>
+<h1>Edit Movie</h1>
 
-<% @the_movie.errors.full_messages.each do |message| %>
-  <p style="color: red;"><%= message %></p>
+<%= form_with url: movie_path(@the_movie), method: :patch, local: true do %>
+  <div>
+    <%= label_tag :query_title, "Title" %>
+    <%= text_field_tag :query_title, @the_movie.title %>
+  </div>
+
+  <div>
+    <%= label_tag :query_description, "Description" %>
+    <%= text_area_tag :query_description, @the_movie.description, rows: 3 %>
+  </div>
+
+  <div>
+    <button>Update Movie</button>
+  </div>
 <% end %>
-
-<form action="<%= movie_path(@the_movie.id) %>" method="post">
-  <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
-  
-  <input name="_method" value="patch" type="hidden">
-
-  <div>
-    <label for="title_box">
-      Title
-    </label>
-
-    <input type="text" id="title_box" name="query_title" value="<%= @the_movie.title %>">
-  </div>
-
-  <div>
-    <label for="description_box">
-      Description
-    </label>
-
-    <textarea id="description_box" name="query_description" rows="3"><%= @the_movie.description %></textarea>
-  </div>
-
-  <button>
-    Update Movie
-  </button>
-</form>

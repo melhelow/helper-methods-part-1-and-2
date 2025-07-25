@@ -2,33 +2,26 @@ class MoviesController < ApplicationController
   def new
     @the_movie = Movie.new
 
-    render template: "movies/new"
+  
   end
 
   def index
-    matching_movies = Movie.all
+  @movies = Movie.all.order(created_at: :desc)
 
-    @list_of_movies = matching_movies.order({ created_at: :desc })
+  respond_to do |format|
+    format.json do
+      render json: @movies
+    end
 
-    respond_to do |format|
-      format.json do
-        render json: @list_of_movies
-      end
-
-      format.html do
-        render template: "movies/index"
-      end
+    format.html do
+      render template: "movies/index"
     end
   end
+end
+
 
   def show
-    the_id = params.fetch(:id)
-
-    matching_movies = Movie.where({ id: the_id })
-
-    @the_movie = matching_movies.first
-
-    render template: "movies/show"
+   @the_movie = Movie.find(params.fetch(:id))
   end
 
   def create
@@ -45,37 +38,44 @@ class MoviesController < ApplicationController
   end
 
   def edit
-    the_id = params.fetch(:id)
-
-    matching_movies = Movie.where({ id: the_id })
-
-    @the_movie = matching_movies.first
-
-    render template: "movies/edit" 
+   @the_movie = Movie.find(params.fetch(:id))
   end
 
- def update
-  the_id = params.fetch(:id)
-  the_movie = Movie.where({ id: the_id }).first
+def update
+  @the_movie = Movie.find(params[:id])
 
-  the_movie.title = params.fetch("query_title")
-  the_movie.description = params.fetch("query_description")
+  # Use params["query_title"] directly; it returns nil if missing instead of raising error
+  title_param = params["query_title"]
+  description_param = params["query_description"]
 
-  if the_movie.valid?
-    the_movie.save
-    redirect_to movie_url(the_movie),  notice: "Movie updated successfully."
+  # Optionally check presence to avoid saving invalid data
+  if title_param.blank?
+    flash.now[:alert] = "Title cannot be blank"
+    return render :edit
+  end
+
+  @the_movie.title = title_param
+  @the_movie.description = description_param
+
+  if @the_movie.valid?
+    @the_movie.save
+    redirect_to movie_url(@the_movie), notice: "Movie updated successfully."
   else
-    redirect_to movie_url(the_movie),  alert: "Movie failed to update successfully."
+    flash.now[:alert] = "Movie failed to update successfully."
+    render :edit
   end
 end
 
 
-  def destroy
-    the_id = params.fetch(:id)
-    the_movie = Movie.where({ id: the_id }).first
 
-    the_movie.destroy
 
-    redirect_to(movies_url, { notice: "Movie deleted successfully." })
-  end
+def destroy
+  @the_movie = Movie.find(params.fetch(:id))
+
+  @the_movie.destroy
+
+  redirect_to(movies_url, notice: "Movie deleted successfully.")
+end
+
+
 end
