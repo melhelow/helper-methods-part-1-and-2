@@ -6,7 +6,7 @@
 <hr>
 
 <div>
-  <a href="<%= new_movie_path %>">New movie</a>
+  <%= link_to 'new movie', new_movie_path %>
 </div>
 
 <hr>
@@ -59,8 +59,9 @@
     </td>
 
     <td>
-      <a href="<%= movie_path(a_movie.id) %>">
-        Show details
+     
+      <%= link_to 'Show details', movie_path(a_movie.id) %>
+        
       </a>
     </td>
   </tr>
